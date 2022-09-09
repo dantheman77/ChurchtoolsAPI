@@ -3,12 +3,10 @@ import requests
 import json
 
 # Project related imports
-import sys
-sys.path.append("./config")
-import churchToolsPropertyReader
+from config import churchToolsPropertyReader as ct
 
 # Global
-ctProperties = churchToolsPropertyReader.ChurchtoolsPropertyReader("./config/ct.properties")
+ctProperties = ct.ChurchtoolsPropertyReader("./config/ct.properties")
 
 class ChurchToolsAPI():    
     def __init__(self):
@@ -28,25 +26,15 @@ class ChurchToolsAPI():
     # Returns the standard arrangement for a song with the given song id
     def findStandardArrangementBySongId(self, id):
         arrangements = json.loads(self.findSongById(id))["data"][0]["arrangements"]
-
-        for arrangement in arrangements:
-            if arrangement["name"].__eq__("Standard-Arrangement"):
-                return arrangement
-
-        return null
+        return arrangements[0]
     
     # Returns the standard arrangement for a song with the given song name
     def findStandardArrangementBySongName(self, name):
         arrangements = json.loads(self.findSongByName(name))["data"][0]["arrangements"]
-
-        for arrangement in arrangements:
-            if arrangement["name"].__eq__("Standard-Arrangement"):
-                return arrangement
-
-        return null
+        return arrangements[0]
 
     # Edit the arrangement key for the specified song id
-    def editArrangementKeyForSongName(self, id, keyOfArrangement):
+    def editArrangementKeyForSongId(self, id, keyOfArrangement):
         url = ctProperties.getAjaxProperty("churchtools.ajax.url.churchservice")
         
         arrangement = self.findStandardArrangementBySongId(id)
@@ -119,5 +107,4 @@ class ChurchToolsAPI():
             return response
         
         self.sessionCreated = False
-        return null
 
